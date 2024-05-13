@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using TodoApi;
 using TodoApi.Domain;
 using TodoApi.Domain.Models;
 
+var corsPolicy= "corsapp";
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<TodoDbContext>(opt => opt.UseInMemoryDatabase("TodoList"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -13,10 +13,11 @@ builder.Services.AddOpenApiDocument(config =>
     config.Title = "TodoAPI v1";
     config.Version = "v1";
 });
-builder.Services.AddAutoMapper(config =>
-{
-    config.AddProfile(new TodoMappingProfile());
-});
+builder.Services.AddCors(p => p.AddPolicy(corsPolicy, builder =>
+    {
+        builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+    }));
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -30,6 +31,8 @@ if (app.Environment.IsDevelopment())
         config.DocExpansion = "list";
     });
 }
+
+app.UseCors(corsPolicy);
 
 app.MapGet("/todoitems", async (TodoDbContext db) =>
     await db.Todos.ToListAsync());
