@@ -46,14 +46,13 @@ export class AppComponent {
   todos: Todo[] = [];
   form: FormGroup;
   recordId: number = 1;
-  todosbeha:BehaviorSubject<Todo[]>;
+
+
 
   /**
    *
    */
   constructor(private todoApiService: TodoApiService) {
-
-    this.todosbeha = new BehaviorSubject<Todo[]>(this.todos); 
 
     this.form = new FormGroup({
       ctrlPriority: new FormControl<number | null>(null),
@@ -73,10 +72,13 @@ export class AppComponent {
       isDone: JSON.parse(form.value.ctrlStatus[0]),
       priority:form.value.ctrlPriority.id,
     };
-    this.todoApiService.insertarTodo(todo);
+    this.todoApiService.insertarTodo(todo)
+    .subscribe((value)=>{
+      this.todos.push(value);
+      this.recordId = this.todos.length +1;
+    });
+   
     
-    
-    this.recordId++;
   }
 
   listarTodos() {
@@ -86,7 +88,7 @@ export class AppComponent {
       .subscribe({
         next: (todos) => {
           this.todos = todos;
-          this.todosbeha.next(todos);
+         
         },
         error: (err) => {
           console.error(err);

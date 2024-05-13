@@ -61,12 +61,12 @@
   <div class="col">
     <div class="card">
       <div style="width: 360px; height: 280px">
-        <ul #todoLista>
-          <ng-container *ngFor="let data of todos; let i = index">
+        <ul class="no-bullets" #todoLista>
+          <ng-container *ngFor="let task of todos; let i = index">
             <li>
               <div>
                 <div>
-                  {{ data.name }}
+                  {{ task.name }}
                 </div>
                 <div>
                   <div
